@@ -1,0 +1,1019 @@
+<html>
+  <head>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+  </head>
+
+  <body>
+    <div id="root"></div>
+  </body>
+
+  <!-- <style>
+    .backcolor {
+      background-color : red;
+    }
+
+    .bigsize {
+      font-size: 40px;
+    }
+  </style> -->
+
+  <script>
+
+
+// CREER DES COMPOSANTS //
+
+      Vue.component("Timer", {
+        data() {
+          return {
+            min : this.minutes,
+            sec : this.seconds
+          }
+        },
+        props : [
+          "minutes",
+          "seconds"
+        ],
+        computed : {
+          time() {
+            var min = this.min;
+            var sec = this.sec;
+            if (min < 10) min = "0" + min;
+            if (sec < 10) sec = "0" + sec;
+            return min + ":" + sec;
+          }
+        },
+        created() {
+          var timer = setInterval(() => {
+            this.sec -= 1;
+            if (this.sec < 0) {
+              this.min -= 1;
+              if (this.min < 0) {
+                this.min = 0;
+                this.sec = 0;
+                clearInterval(timer);
+              }
+              else this.sec = 59;
+            }
+          }, 1000);
+        },
+        template : `
+          <div>
+           <div v-if="sec||min"> Il reste {{time}}</div>
+           <div v-else>Fin du timer</div>
+          </div>`
+      });
+
+
+    var vm = new Vue ({
+      el : "#root",
+      template : `
+        <div>
+          <Timer minutes="0" seconds="5" />
+        </div>`
+    });
+
+
+
+
+// FONCTION D'OBSERVATION (traitement lors de la saisie d'un champ)
+
+    // var vm = new Vue ({
+    //   el : "#root",
+    //   data : {
+    //     text : "",
+    //     error : false
+    //   },
+    //   watch: {
+    //     text(newValue, oldValue) {
+    //       if (newValue.length >= 6) {
+    //         this.text = oldValue;
+    //         this.error = true;
+    //       }
+    //       else if (newValue.length < 5) this.error = false;
+    //     }
+    //   },
+    //   methods : {
+    //   },
+    //   template : `
+    //     <div>
+    //       <b>Texte (max 5 car)</b> <br>
+    //       <input type="text" v-model="text"> <br><br>
+    //       <div style="color:red" v-show="error">Maximun 5 caractères</div>
+    //       <hr><br>
+    //       <b>Texte saisi</b> <br>
+    //       {{text}}
+    //     </div>`
+    // });
+
+
+
+// Fonction D'OBSERVATION (watch) //
+
+    // var vm = new Vue ({
+    //   el : "#root",
+    //   data : {
+    //     date : new Date()
+    //   },
+    //   methods : {
+    //   },
+    //   created() {
+    //     setInterval(() => {
+    //       this.date = new Date();
+    //     }, 1000);
+    //   },
+    //   watch : {
+    //     hhmmss(newValue, oldValue) {
+    //       newValue = newValue.split(":");
+    //       newMin = newValue[1];
+    //       oldValue = oldValue.split(":");
+    //       oldMin = oldValue[1];
+    //       if (oldMin != newMin) console.log("Changement de minutes");
+    //     }
+    //   },
+    //   computed : {
+    //     hhmmss() {
+    //       return this.date.toTimeString().split(" ")[0];
+    //     }
+    //   },
+    //   template : `
+    //   <div>
+    //     <b>Heure format HH:MM:SS</b> : <br> {{hhmmss}}
+    //   </div>`
+    // });
+
+
+
+// PROPRIETE CALCULE (filtrer des noms dans une liste)
+
+    // var vm = new Vue({
+    //   el : "#root",
+    //   data: {
+    //     name : "",
+    //     names : [
+    //     "Aaron Abbott",
+    //     "Abe Adams",
+    //     "Abraham Adcock",
+    //     "Adel Addams",
+    //     "Adrian Ashams",
+    //     "Aidan Aindreis",
+    //     "Al Allan",
+    //     "Alan Allen",
+    //     "Alban Allison",
+    //     "Albert Alyn",
+    //     "Albin Ambrose",
+    //     "Alexander Anderson",
+    //     "Alfred Andres",
+    //     "Allan Andrew",
+    //     "Allen Andrews",
+    //     "Allister Anew",
+    //     "Alphonse Anthony",
+    //     "Alvin Apple",
+    //     "Amos Archdeacon",
+    //     "Andre Archer",
+    //     "Andrew Ash",
+    //     "Andy Ashley",
+    //     "Angus Atcock",
+    //     "Anthony Austen",
+    //     "Antony Austin",
+    //     "Arnold Aylen",
+    //     "Arthur Aylin",
+    //     "Augustus Ayling"
+    //     ]
+    //   },
+    //   methods : {
+    //   },
+    //   computed: {
+    //     found() {
+    //       return this.names.filter((name) => {
+    //         if (name.toUpperCase().indexOf(this.name.toUpperCase()) == -1)
+    //           return false;
+    //         else return true;
+    //       });
+    //     }
+    //   },
+    //   template : `
+    //   <div>
+    //     Name <br>
+    //     <input type="text" v-model="name"> <br>
+    //     <ul style="list-style-type:none;margin-left:-40px;">
+    //       <li v-for="name in found" style="">
+    //         {{name}}
+    //       </li>
+    //     </ul>
+    //   </div>`
+    // });
+
+
+
+
+// PROPRITE CALCULE (avec style) //
+
+    // var vm = new Vue ({
+    //   el:"#root",
+    //   data : {
+    //     styleInit : {
+    //       color : "red",
+    //       backgroundColor : "black",
+    //       fontSize : "30px"
+    //     },
+    //     applyStyle : true
+    //   },
+    //   methods : {
+    //   },
+    //   computed : {
+    //     style() {
+    //       if (this.applyStyle) return this.styleInit;
+    //       else return "";
+    //     }
+    //   },
+    //   template : `
+    //   <div>
+    //     <button v-on:click="applyStyle=true">Add Styles</button>
+    //     <button v-on:click="applyStyle=false">Remove Styles</button>
+    //     <p v-bind:style="style">Hello Vue</p>
+    //   </div>`
+    // });
+
+
+
+
+
+// PROPRIETE CALCULE (date + heure) //
+
+    // var vm = new Vue ({
+    //   el : "#root",
+    //   data : {
+    //     date : new Date()
+    //   },
+    //   methods : {
+    //   },
+    //   created() {
+    //     setInterval(() => {
+    //       this.date = new Date();
+    //     }, 1000);
+    //   },
+    //   computed : {
+    //     hhmmss() {
+    //       return this.date.toTimeString().split(" ")[0];
+    //     },
+    //     ddmmyyyy() {
+    //       var day = this.date.getDate();
+    //       var month = this.date.getMonth() + 1;
+    //       var year = this.date.getFullYear();
+    //       if (day < 10) day = "0" + day;
+    //       if (month < 10) month = "O" + month;
+    //       return `${day}-${month}-${year}`;
+    //     }
+    //   },
+    //   template : `
+    //   <div>
+    //     <b>Date complète</b> <br> {{date}}
+    //     <br><br>
+    //     <b>Date format DD-MM-YYYY</b> : <br> {{ddmmyyyy}}
+    //     <br><br>
+    //     <b>Heure format HH:MM:SS</b> : <br> {{hhmmss}}
+    //   </div>`
+    // });
+
+
+
+
+
+// V-BIND:KEY dans une liste //
+
+    // var vm = new Vue ({
+    //   el : "#root",
+    //   data : {
+    //     elements : [
+    //       "Element 1",
+    //       "Element 2",
+    //       "Element 3",
+    //       "Element 4",
+    //       "Element 5"
+    //     ]
+    //   },
+    //   methods : {
+    //   },
+    //   template : `
+    //   <div>
+    //     <ul>
+    //       <li v-for="(element, index) in elements" v-bind:key="index">
+    //         {{element}}
+    //       </li>
+    //     </ul>
+    //   </div>`
+    // });
+
+
+// V-BIND:STYLE (sous forme de tableau) //
+
+    // var vm = new Vue ({
+    //   el:"#root",
+    //   data : {
+    //     style1 : {
+    //       color : "red",
+    //       backgroundColor : "black"
+    //     },
+    //     style2 : {
+    //       fontSize : "30px"
+    //     }
+    //   },
+    //   methods : {
+    //   },
+    //   template : `
+    //   <div>
+    //     <p v-bind:style="[style1,style2]">Hello Vue</p>
+    //   </div>`
+    // });
+
+
+
+
+// V-BIND:STYLE //
+
+    // var vm = new Vue ({
+    //   el:"#root",
+    //   data : {
+    //     style : {
+    //       color : "red",
+    //       backgroundColor : "black",
+    //       fontSize : "30px"
+    //     },
+    //     applyStyle : true
+    //   },
+    //   methods : {
+    //   },
+    //   template : `
+    //   <div>
+    //     <button v-on:click="applyStyle=true">Add Styles</button>
+    //     <button v-on:click="applyStyle=false">Remove Styles</button>
+    //     <p v-bind:style="applyStyle ? style : ''">Hello Vue</p>
+    //   </div>`
+    // });
+
+
+
+
+// V-BIND:CLASS //
+
+    // var vm = new Vue ({
+    //   el:"#root",
+    //   data : {
+
+    //       backcolor : true,
+    //       bigsize : true
+
+    //   },
+    //   methods : {
+    //   },
+    //   template : `
+    //   <div>
+    //     <button v-on:click="backcolor = !backcolor">
+    //       Toggle backcolor
+    //     </button>
+    //     <button v-on:click="bigsize = !bigsize">
+    //       Toggle bigsize
+    //     </button>
+    //     <p v-bind:class="[backcolor ? 'backcolor' : '', bigsize ? 'bigsize' : '']">
+    //       Hello Vue ! </p>
+    //   </div>`
+    // });
+
+
+
+
+// UTILISATION DE LAZY
+
+    // var vm = new Vue ({
+    //   el:"#root",
+    //   data: {
+    //     text : ""
+    //   },
+    //   methods : {
+    //   },
+    //   template : `
+    //   <div>
+    //     <b> Texte (avec v-model)</b> :
+    //     <br><br>
+    //     <input type="text" v-model.lazy="text">
+    //     <br><br>
+    //     <hr><br>
+
+    //     <b>Texte saisi</b> :
+    //     <p> {{text}} </p>
+    //   </div>`
+    // });
+
+
+
+// UTILISATION DE TRIM (enlever les espaces avant et après le texte) //
+
+    // var vm = new Vue ({
+    //   el:"#root",
+    //   data: {
+    //     text : ""
+    //   },
+    //   methods : {
+    //     display_spaces() {
+    //       var ret = "";
+    //       for (var i=0; i < this.text.length; i++) {
+    //         var a = this.text.charAt(i);
+    //         if (a == " ") a = "_";
+    //         ret += a;
+    //       }
+    //       return ret;
+    //     }
+    //   },
+    //   template : `
+    //   <div>
+    //     <b> Texte (avec v-model)</b> :
+    //     <br><br>
+    //     <input type="text" v-model.trim="text">
+    //     <br><br>
+    //     <hr><br>
+
+    //     <b>Texte saisi</b> :
+    //     <p> {{display_spaces(text)}} </p>
+    //     <b>Nombre de caractère du texte saisi</b> :
+    //     <p> {{text.length}}</p>
+    //   </div>`
+    // });
+
+
+
+// MODIFICATEUR NUMBER //
+
+    // var vm = new Vue ({
+    //   el:"#root",
+    //   data: {
+    //     count : 10
+    //   },
+    //   methods : {
+    //   },
+    //   template : `
+    //   <div>
+    //     <b> Quantité (avec v-model)</b>
+    //     <br><br>
+    //     <input type="text" v-model="count">
+    //     <br><br>
+    //     <hr><br>
+
+    //     <b>Quantité saisie</b> :
+    //     <p> {{count}} </p>
+
+    //     <b>Quantité saisie + 1</b> :
+    //     <p> {{parseFloat(count) + 1}} </p>
+    //   </div>`
+    // });
+
+
+
+
+// LISTE DE SELECTION //
+
+    // var vm = new Vue ({
+    //   el:"#root",
+    //   data: {
+    //     select1: "sel12",
+
+    //      select2: "sel23",
+    //   },
+    //   methods : {
+    //   },
+    //   template : `
+    //   <div>
+    //     <b>Select1 (avec v-model)</b> :
+    //     <br><br>
+    //     <select v-model="select1">
+    //       <option value="sel11">Selection 11</option>
+    //       <option value="sel12">Selection 12</option>
+    //       <option value="sel13">Selection 13</option>
+    //       <option>Selection 14</option>
+    //     </select>
+    //     <br><br>
+
+
+    //     <b>Select2 (avec v-bind)</b> :
+    //     <br><br>
+    //     <select v-bind:value="select2">
+    //       <option value="sel21">Selection 21</option>
+    //       <option value="sel22">Selection 22</option>
+    //       <option value="sel23">Selection 23</option>
+    //       <option>Selection 24</option>
+    //     </select>
+    //     <br><br>
+    //     <br><br>
+
+    //     <b>Variable select1 (avec v-model)</b> :
+    //     <p> {{select1}}</p>
+
+    //     <b>Variable select2 (avec v-bind)</b> :
+    //     <p> {{select2}}</p>
+    //   </div>`
+    // });
+
+
+
+
+// BOUTON RADIO //
+
+    // var vm = new Vue ({
+    //   el:"#root",
+    //   data: {
+    //     radio : "val1",
+
+    //     radio1 : false,
+    //     radio2 : true,
+    //     radio3 : false
+    //   },
+    //   methods : {
+    //   },
+    //   template : `
+    //   <div>
+    //     <b>Radios (avec v-model)</b> :
+    //     <br><br>
+    //     <input type="radio" id="id11" value="val1" v-model="radio">
+    //     <label for="id11">Radio1</label>
+    //     <input type="radio" id="id12" value="val2" v-model="radio">
+    //     <label for="id12">Radio2</label>
+    //     <input type="radio" id="id13" value="val3" v-model="radio">
+    //     <label for="id13">Radio3</label>
+    //     <br><br>
+
+
+    //     <b>Radios (avec v-bind)</b> :
+    //     <br><br>
+    //     <input type="radio" id="id31" name="group" v-bind:checked="radio1">
+    //     <label for="id31">Radio1</label>
+    //     <input type="radio" id="id32" name="group" v-bind:checked="radio2">
+    //     <label for="id32">Radio2</label>
+    //     <input type="radio" id="id23" name="group" v-bind:checked="radio3">
+    //     <label for="id33">Radio3</label>
+    //     <br><br>
+
+    //     <b>Variable radio</b> :
+    //     <p> {{radio}}</p>
+
+    //     <b>Variable radio1, radio2, radio3</b> :
+    //     <p> {{radio1}}, {{radio2}}, {{radio3}}</p>
+    //   </div>`
+    // });
+
+
+
+
+
+// CHECKBOX (case à cocher) //
+
+    // var vm = new Vue ({
+    //   el:"#root",
+    //   data: {
+    //     checks : ["val1", "val3"],
+
+    //     check1 : false,
+    //     check2 : true,
+    //     check3 : false
+    //   },
+    //   methods : {
+    //   },
+    //   template : `
+    //   <div>
+    //     <b>Checkboxes (avec v-model)</b> :
+    //     <br><br>
+    //     <input type="checkbox" id="id1" value="val1" v-model="checks">
+    //     <label for="id1">Check1</label>
+    //     <input type="checkbox" id="id2" value="val2" v-model="checks">
+    //     <label for="id2">Check2</label>
+    //     <input type="checkbox" id="id3" value="val3" v-model="checks">
+    //     <label for="id3">Check3</label>
+    //     <br><br>
+
+
+    //     <b>Checkbox (avec v-bind)</b> :
+    //     <br><br>
+    //     <input type="checkbox" id="id21" v-bind:checked="check1">
+    //     <label for="id21">Check1</label>
+    //     <input type="checkbox" id="id22" v-bind:checked="check2">
+    //     <label for="id22">Check2</label>
+    //     <input type="checkbox" id="id23" v-bind:checked="check3">
+    //     <label for="id23">Check3</label>
+    //     <br><br>
+
+    //     <b>Variable checks</b> :
+    //     <p> {{checks}}</p>
+
+    //     <b>Variable check1, check2, check3</b> :
+    //     <p> {{check1}}, {{check2}}, {{check3}}</p>
+    //   </div>`
+    // });
+
+
+
+// UTILISATION V-MODEL (avec formulaire) //
+
+    // var vm = new Vue ({
+    //   el:"#root",
+    //   data: {
+    //     message : "Message Initial"
+    //   },
+    //   methods : {
+    //   },
+    //   template : `
+    //   <div>
+    //     <b>Message (avec v-model)</b> :
+    //     <br><br>
+    //     <textarea type="text" v-model="message"></textarea>
+    //     <br><br>
+    //     <br><br>
+    //     <b>Message (avec v-bind)</b> :
+    //     <br><br>
+    //     <textarea type="text" v-bind:value="message"></textarea>
+    //     <br><br>
+    //     <br><br>
+
+    //     <b>Message saisi</b>
+    //     <p style="white-space: pre-line;"> {{message}} </p>
+    //   </div>`
+    // });
+
+
+
+
+// LIAISON AVEC V-BIND //
+
+    // var vm = new Vue ({
+    //   el:"#root",
+    //   data: {
+    //     time : "..."
+    //   },
+    //   methods : {
+    //   },
+    //   created() {
+    //     setInterval(() => {
+    //       this.time = (new Date()).toTimeString().split(" ")[0];
+    //     },1000);
+    //   },
+    //   template : `
+    //     <div>
+    //       Il est {{time}} <br> <br>
+    //       <span v-bind:title="time">
+    //         Vous pouvez aussi positionner la souris sur le texte pour voir l'heure
+    //       </span> <br> <br>
+    //         Il est <input v-bind:value="time"> <br>
+    //     </div>`
+    // });
+
+
+
+// LIAISON AVEC TIME //
+
+    // var vm = new Vue ({
+    //   el:"#root",
+    //   data: {
+    //     time : "..."
+    //   },
+    //   methods : {
+    //   },
+    //   created() {
+    //     setInterval(() => {
+    //       this.time = (new Date()).toTimeString().split(" ")[0];
+    //     },1000);
+    //   },
+    //   template : `
+    //     <div>
+    //       Il est {{time}} <br>
+    //     </div>`
+    // });
+
+// AUTRE FORME DE LIAISON //
+
+    // var vm = new Vue ({
+    //   el:"#root",
+    //   data: {
+    //     time : "..."
+    //   },
+    //   methods : {
+    //   },
+    //   template : `
+    //     <div>
+    //       Il est {{time}} <br>
+    //     </div>`
+    // });
+
+    // setInterval(function() {
+    //   vm.time = (new Date()).toTimeString().split(" ")[0];
+    // },1000);
+
+
+
+
+
+// FILTRER LES TOUCHES A ET B //
+
+    // var vm = new Vue ({
+    //   el:"#root",
+    //   data: {
+    //   },
+    //   methods: {
+    //     keydown(event) {
+    //       console.log(event.key);
+    //       if (event.key!="a" && event.key!="b") event.preventDefault();
+    //     }
+    //   },
+    //   template : `
+    //   <div>
+    //     <input type="text" v-on:keydown="keydown($event)">
+    //   </div>`
+    // });
+
+
+
+
+
+// UTILISATION DE .ONCE //
+
+    // var vm = new Vue ({
+    //   el:"#root",
+    //   data: {
+    //   },
+    //   methods : {
+    //     click(event) {
+    //       console.log("Click..");
+    //     }
+    //   },
+    //   template : `
+    //   <div>
+    //     <button v-on:click.once="click($event)">Once</button>
+    //   </div>`
+    // });
+
+
+
+
+
+// UTILISATION DE .SELF //
+
+    // var vm = new Vue ({
+    //   el: "#root",
+    //   data : {
+    //   },
+    //   methods : {
+    //     click(event) {
+    //       console.log("Ne pas cliquer sur 'Vue'");
+    //     }
+    //   },
+    //   template : `
+    //   <div>
+    //     <button>
+    //       <div v-on:click.self="click($event)" style="font-size:20px;">
+    //         Hello
+    //         <span style="padding:3px; background-color:red; color:white;">
+    //           Vue
+    //         </span>
+    //          !!!
+    //       </div>
+    //     </button>
+    //   </div>`
+    // });
+
+
+
+
+
+// MENU + AFFICHAGE //
+
+    // var vm = new Vue ({
+    //   el: "#root",
+    //   data : {
+    //     show : false
+    //   },
+    //   methods : {
+    //     click(event) {
+    //       var menu = document.getElementById("menu");
+    //       menu.style.left = event.pageX;
+    //       menu.style.top = event.pageY;
+    //       this.show = true;
+    //     },
+    //     hide() {
+    //       this.show = false;
+    //     }
+    //   },
+    //   template : `
+    //   <div v-on:click="hide()" style="height:100%">
+    //     <div id="menu"
+    //          style="position:absolute; border:solid 1px; background-color:#ddd;"
+    //          v-show="show">
+    //       <ul style="list-style-type:none; margin:0px; padding:5px;">
+    //         <li style="padding:5px;"><a href="http://yahoo.com">Yahoo</a></li>
+    //         <li style="padding:5px;"><a href="http://google.com">Google</a></li>
+    //         <li style="padding:5px;"><a href="http://bing.com">Bing</a></li>
+    //       </ul>
+    //     </div>
+    //     <button v-on:click.stop="click($event)" style="font-size:20px;">
+    //       Search engine
+    //     </button>
+
+    //   </div>`
+    // });
+
+
+
+
+
+
+// RECUP LA VALEUR SAISIE DANS UN CHAMP//
+
+  // var vm = new Vue({
+  //   el: "#root",
+  //   data : {
+
+  //   },
+  //   methods : {
+  //     keyup(event)    {
+  //       console.log(event.target.value);
+  //       event.target.value = event.target.value.toLowerCase();
+  //     }
+  //   },
+  //   template : `
+  //   <div>
+  //   <input type="text" v-on:keyup="keyup($event)">
+  //   </div>`
+  // });
+
+
+
+
+
+
+
+
+// DESSIN //
+
+    // var vm = new Vue({
+    //   el: "#root",
+    //   data : {
+    //     x : 0,
+    //     y : 0
+    //   },
+    //   methods : {
+    //     mousedown(event) {
+    //       this.x = event.clientX;
+    //       this.y = event.clientY;
+    //     },
+    //     mousemove(event) {
+    //       if (event.which == 1) {
+    //         var canvas = document.getElementById("canvas");
+    //         var ctx = canvas.getContext("2d");
+    //         ctx.beginPath();
+    //         ctx.moveTo(this.x, this.y);
+    //         ctx.lineTo(event.clientX, event.clientY);
+    //         ctx.stroke();
+    //         ctx.closePath();
+    //         this.x = event.clientX;
+    //         this.y = event.clientY;
+    //       }
+    //     }
+    //   },
+    //   template : `
+    //   <div>
+    //     <canvas id="canvas"
+    //             style="position:absolute; top:0px; left:0px; border:solid red 5px;"
+    //             v-on:mousemove="mousemove($event)"
+    //             v-on:mousedown="mousedown($event)">
+    //     </canvas>
+    //   </div>`
+
+    // });
+
+
+
+
+
+// PANIER + - //
+
+  // var vm = new Vue({
+  //   el : "#root",
+  //   data : {
+  //     value : 0
+  //   },
+  //   methods : {
+  //     incr(step) {
+  //       step = step || 1,
+  //       this.value += step;
+  //     },
+  //     decr(step) {
+  //       step = step || 1,
+  //       this.value -= step;
+  //     }
+  //   },
+
+  //   template :
+  //     `<div>
+  //       Value {{value}} <br><br>
+  //       <button @click="incr()"> + </button>
+  //       <button @click="decr()"> - </button>
+  //     </div>`
+  // });
+
+
+
+
+
+// LISTE //
+
+    // Vue.component("Hello", {
+    //   template : `<div>
+    //                 <h1> Hello Vue ! </h1>
+    //               </div>`
+    // });
+
+    // var vm = new Vue({
+    //   el : "#root",
+    //   data: {
+    //     elements : [
+    //       { text : "Element 1", modifyOn : false },
+    //       { text : "Element 2", modifyOn : false },
+    //       { text : "Element 3", modifyOn : false },
+    //       { text : "Element 4", modifyOn : false },
+    //       { text : "Element 5", modifyOn : false }
+    //     ]
+    //   },
+
+      // methods : {
+      //   remove(index) {
+      //     this.elements = this.elements.filter(function(element, i) {
+      //       if (i == index) return false;
+      //       else return true;
+      //     });
+      //   },
+      //   modify(index) {
+      //     this.elements[index].modifyOn = true;
+      //   },
+
+      // valid(index, event) {
+      //     var value = event.target.value;
+      //     this.elements = this.elements.map(function(element, i) {
+      //       if (i == index) return { text : value, modifyOn : false };
+      //       else return element;
+      //     });
+      //   },
+      //   add() {
+      //     var length = this.elements.length + 1;
+      //     var element = { text : "Element" + length, modifyOn : false};
+      //     this.elements.push(element);
+      //   }
+      // },
+      // updated() {
+      //   var inputs = this.$refs.input;
+      //   if (inputs && inputs.length) {
+      //     var last_input = inputs[inputs.length -1];
+      //     last_input.focus();
+      //   }
+      // },
+
+
+      // template :
+      //   `<div>
+      //     <button v-on:click="add()">Add Element</button>
+      //     <ul>
+      //       <li v-for="(element, index) in elements" style="margin:10px;">
+      //         <span
+      //           v-if="!element.modifyOn"
+      //           v-on:dblclick="modify(index)">{{element.text}}</span>
+      //         <input type="text" v-else style="width:100px;"
+      //                v-bind:value="element.text"
+      //                v-on:keyup.enter="valid(index, $event)" ref="input" >
+      //         <button v-on:click="remove(index)"
+      //                 style="margin-left:10px;">Remove</button>
+      //       </li>
+      //     </ul>
+      //     <div v-if="elements.length == 0">Liste vide</div>
+      //   </div>`
+
+      // data: {
+      //   name : "Vue",
+      //   welcome : "Hello"
+      // },
+
+      // methods : {
+      //   display_header : function() {
+      //     return this.welcome + " " + this.name;
+      //   }
+      // },
+
+      // computed : {
+      //   header : function() {
+      //     return this.welcome + " " + this.name;
+      //   }
+      // }
+
+    // });
+
+
+
+    // setTimeout(function() {
+    //   vm.$data.name = "Vue.js";
+    // }, 1000);
+
+  </script>
+</html>
